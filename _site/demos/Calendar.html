@@ -1,0 +1,186 @@
+<html lang="en-US">
+<head>
+    <title>Calendar</title>
+    <style>
+        @media print {
+            html, body {
+                height: 98%;
+            }
+            
+            #header > a{
+                display: none;
+            }
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 10px;
+            min-height: calc(100% - 20px);
+            font-family: sans-serif;
+        }
+        
+        #header
+        {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        #month {
+            font-size: 24px;
+        }
+
+        #days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: auto;
+            grid-gap: 0;
+        }
+        
+        .day {
+            padding-left: 3px;
+        }
+        
+        #calendar {
+            flex: 1 1 auto;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: 1fr;
+            border: solid 1px black;
+            grid-gap: 0;
+        }
+        
+        .cell {
+            border-right: solid 1px #ccc;
+            border-bottom: solid 1px #ccc;
+            padding: 3px;
+            text-align: right;  
+            font-size: .8em;
+        }
+        
+        .cell:nth-last-child(-n+7) {
+            border-bottom: none;
+        }
+        
+        .cell:nth-child(7n) {
+            border-right: none;
+        }
+        
+        p {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: left;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <a href="#" onclick="prev()">Prev</a>
+    &nbsp;
+    <span id="month"></span>
+    &nbsp;
+    <a href="#" onclick="next()">Next</a></div>
+
+<div id="days">
+    <div class="day">Sun</div>
+    <div class="day">Mon</div>
+    <div class="day">Tue</div>
+    <div class="day">Wed</div>
+    <div class="day">Thu</div>
+    <div class="day">Fri</div>
+    <div class="day">Sat</div>
+</div>
+<div id="calendar">
+</div>
+<script>
+    const holidays = {
+        '2022.10.10' : "Columbus Day",
+        '2022.10.31' : "Halloween",
+        '2022.11.8' :  "Election Day",
+        '2022.11.11' : "Veterans Day",
+        '2022.11.24' : "Thanksgiving",
+        '2022.12.25' : "Christmas",
+        '2023.1.1' : "New Year's Day",
+        '2023.1.16' : "MLK Day",
+        '2023.2.14' : "Valentine's Day",
+        '2023.2.20' : "Presidents' Day",
+        '2023.3.17' : "St Patrick's Day",
+        '2023.4.9' : "Easter",
+        '2023.5.5' : "Cinco de Mayo",
+        '2023.5.14' : "Mother's Day",
+        '2023.5.29' : "Memorial Day",
+        '2023.6.14' : "Flag Day",
+        '2023.6.18' : "Father's Day",
+        '2023.6.19' : "Juneteenth",
+        '2023.7.4' : "Independence Day",
+        '2023.9.4' : "Labor Day",
+        '2023.10.9' : "Columbus Day",
+        '2023.10.31' : "Halloween",
+        '2023.11.7' : "Election Day",
+        '2023.11.10' : "Veterans Day",
+        '2023.11.23' : "Thanksgiving Day",
+        '2023.12.25' : "Christmas"
+    };
+    
+    let effectiveDate = new Date();
+    
+    render();
+    
+    function render() {
+        const month = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth(), 1);
+        const monthElem = document.getElementById("month");
+        monthElem.innerText = month.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+        const firstDayOffset = month.getDay();
+        const calendarElem = document.getElementById("calendar");
+        calendarElem.innerHTML = ''; // clear all
+        for (let i = 0; i < firstDayOffset; i++) {
+            const cell = createCell();
+            calendarElem.prepend(cell);
+        }
+        const monthLength = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+        for (let i = 1; i <= monthLength; i++) {
+            const cell = createCell(i);
+            calendarElem.append(cell);
+        }
+        const trailingCellCount = (7 - (firstDayOffset + monthLength) % 7) % 7;
+        for (let i = 0; i < trailingCellCount; i++) {
+            const cell = createCell();
+            calendarElem.append(cell);
+        }
+    }
+    
+    function createCell(day)
+    {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        if(day > 0)
+        {
+            cell.innerText = day;
+            const dateStr = `${effectiveDate.getFullYear()}.${effectiveDate.getMonth()+1}.${day}`;
+            if(holidays[dateStr] !== undefined)
+            {
+                const p = document.createElement("p");
+                p.innerText = holidays[dateStr];
+                cell.append(p);
+            }
+        }
+        return cell;
+    }
+    
+    function next()
+    {
+        effectiveDate = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth()+1, 1);
+        render();
+    }
+
+    function prev()
+    {
+        effectiveDate = new Date(effectiveDate.getFullYear(), effectiveDate.getMonth()-1, 1);
+        render();
+    }
+</script>
+</body>
+</html>
