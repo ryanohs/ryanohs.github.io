@@ -1,0 +1,60 @@
+/*
+    Based on Hey Nineteen by Blake Watson
+    https://blakewatson.com/wp/wp-content/themes/heynineteen/css/highlight-js/hey-nineteen.css?ver=3
+    
+    This work is licensed under the Creative Commons CC0 1.0 Universal License
+ */
+
+pre>code {
+    padding: 1.25em;
+}
+
+code {
+    background-color: #201826;
+    color: #d8d5dd;
+    font-size: 14px;
+    /*line-height: 2em;*/
+    overflow-x: auto;
+    tab-size: 4;
+}
+
+/* Red */
+/*.c-not {*/
+/*    !*color: #d93578;*!*/
+/*    color: #ff5050;*/
+/*}*/
+
+/* Orange */
+.c-number,
+.fs-number,
+.sql-number,
+.apple-number{
+    color: #e38566;
+}
+ 
+/* Yellow */
+.c-string, .c-char, .fs-string, .fs-char, .sql-string, .apple-string {
+    color: #EFC512;
+}
+
+/* Aqua */
+/*.sql-variable, .fs-monad {*/
+/*    color: #36c2b6;*/
+/*}*/
+
+/* Green */
+.c-comment, .fs-comment, .sql-comment {
+    /*color: #66a53d;*/
+    color: #98af78;
+}
+
+/* Blue */
+.c-keyword, .fs-keyword, .sql-keyword, .apple-keyword {
+    color: #5f9fd4;
+}
+
+/* Purple */
+.c-operator, .fs-monad {
+    /*color: #9882c4;*/
+    color: #ae94e2;
+}
