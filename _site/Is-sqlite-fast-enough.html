@@ -1,0 +1,139 @@
+<html lang="en-US">
+<head>
+    <title>Is SQLite fast enough?</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Is SQLite fast enough?</h2>
+
+<p>Yes, yes it is.</p>
+<p>Based on the bullet journal node structure from my prior post, I wanted to know how long it would take to load the structure if I stored it in SQLite.</p>
+<p>I started with <a href="https://www.developersoapbox.com/connecting-to-a-sqlite-database-using-net-core/">this code</a> to call SQLite via EF Core. Then I added a recursive query based on the SQLite CTE <a href="https://www.sqlite.org/lang_with.html">documentation</a>.</p>
+<p>To generate data, I'm using recursion to build a tree with about 10,000 nodes. That works out to about 200 printed pages assuming one node per line. My dataset will be smaller than this.</p>
+<p>The result was: it's faster than I expected.</p>
+<pre><code>60 ms
+11,111 records
+222 pages
+</code></pre>
+<p>How does it scale?</p>
+<pre><code>3,751 ms
+111,111 records
+2,222 pages
+</code></pre>
+<p>Limitations: I'm only storing the node and parent IDs. I didn't store any node content in the database, but I don't expect that to impact the speed of the look ups to load the tree structure.</p>
+<p>The GUID IDs could be converted to binary blobs but at this speed I don't think it's necessary.</p>
+<p>I found that adding the index decreased the run time about 33%.</p>
+<pre><code>[Fact]
+<span class="c-keyword">public</span> <span class="c-keyword">void</span> Test()
+{
+	<span class="c-keyword">var</span> connectionStringBuilder <span class="c-operator">=</span> <span class="c-keyword">new</span> SqliteConnectionStringBuilder();
+
+	connectionStringBuilder.DataSource <span class="c-operator">=</span> <span class="c-string">&quot;./SqliteDB.db&quot;</span>;
+
+	<span class="c-keyword">using</span> (<span class="c-keyword">var</span> connection <span class="c-operator">=</span> <span class="c-keyword">new</span> SqliteConnection(connectionStringBuilder.ConnectionString))
+	{
+		connection.Open();
+
+		<span class="c-keyword">var</span> delTableCmd <span class="c-operator">=</span> connection.CreateCommand();
+		delTableCmd.CommandText <span class="c-operator">=</span> <span class="c-string">&quot;DROP TABLE IF EXISTS nodes&quot;</span>;
+		delTableCmd.ExecuteNonQuery();
+
+		<span class="c-keyword">var</span> createTableCmd <span class="c-operator">=</span> connection.CreateCommand();
+		createTableCmd.CommandText <span class="c-operator">=</span> <span class="c-string">&quot;CREATE TABLE nodes(id text PRIMARY KEY, name text, parent text null)&quot;</span>;
+		createTableCmd.ExecuteNonQuery();
+		createTableCmd.CommandText <span class="c-operator">=</span> <span class="c-string">&quot;CREATE INDEX nodes_parent ON nodes(parent);&quot;</span>;
+		createTableCmd.ExecuteNonQuery();
+
+		<span class="c-keyword">var</span> rootId <span class="c-operator">=</span> Guid.NewGuid();
+
+		<span class="c-keyword">using</span> (<span class="c-keyword">var</span> transaction <span class="c-operator">=</span> connection.BeginTransaction())
+		{
+			<span class="c-keyword">var</span> insertCmd <span class="c-operator">=</span> connection.CreateCommand();
+
+			insertCmd.CommandText <span class="c-operator">=</span> $<span class="c-string">&quot;INSERT INTO nodes VALUES('{rootId}', 'Root', null)&quot;</span>;
+			insertCmd.ExecuteNonQuery();
+
+			<span class="c-keyword">var</span> list <span class="c-operator">=</span> <span class="c-keyword">new</span> List<span class="c-operator">&lt;</span>Tuple<span class="c-operator">&lt;</span>Guid, Guid<span class="c-operator">&gt;</span><span class="c-operator">&gt;</span>();
+
+			MakeChildren(rootId, <span class="c-number">4</span>, list);
+
+			<span class="c-comment">// shuffle </span>
+			Random rng <span class="c-operator">=</span> <span class="c-keyword">new</span> Random();
+			list <span class="c-operator">=</span> list.OrderBy(a <span class="c-operator">=</span><span class="c-operator">&gt;</span> rng.Next()).ToList();
+
+			<span class="c-keyword">foreach</span>(<span class="c-keyword">var</span> item <span class="c-keyword">in</span> list)
+			{
+				insertCmd.CommandText <span class="c-operator">=</span> $<span class="c-string">&quot;INSERT INTO nodes VALUES('{item.Item1}', '', '{item.Item2}')&quot;</span>;
+				insertCmd.ExecuteNonQuery();
+			}
+			
+			transaction.Commit();
+		}
+
+		<span class="c-keyword">var</span> selectCmd <span class="c-operator">=</span> connection.CreateCommand();
+		selectCmd.CommandText <span class="c-operator">=</span> $@<span class="c-string">&quot;
+WITH RECURSIVE
+tree_of(id, depth) AS (
+VALUES('{rootId}', 0)
+UNION ALL
+SELECT nodes.id, depth+1 FROM nodes, tree_of
+WHERE nodes.parent=tree_of.id
+ORDER BY 2 DESC
+)
+SELECT n.id, n.name, tree_of.depth FROM tree_of
+join nodes n on tree_of.id = n.id
+;&quot;</span>;
+
+		<span class="c-keyword">var</span> i <span class="c-operator">=</span> <span class="c-number">0</span>;
+		<span class="c-keyword">var</span> sw <span class="c-operator">=</span> Stopwatch.StartNew();
+		<span class="c-keyword">using</span> (<span class="c-keyword">var</span> reader <span class="c-operator">=</span> selectCmd.ExecuteReader())
+		{
+			<span class="c-keyword">while</span> (reader.Read())
+			{
+				<span class="c-keyword">var</span> id <span class="c-operator">=</span> reader.GetString(<span class="c-number">0</span>);
+				<span class="c-keyword">var</span> name <span class="c-operator">=</span> reader.GetString(<span class="c-number">1</span>);
+				<span class="c-keyword">var</span> depth <span class="c-operator">=</span> reader.GetInt32(<span class="c-number">2</span>);
+				<span class="c-keyword">var</span> tabs <span class="c-operator">=</span> <span class="c-keyword">new</span> <span class="c-keyword">string</span>(<span class="c-char">'\t'</span>, depth);
+				i<span class="c-operator">++</span>;
+				<span class="c-comment">//_testOutputHelper.WriteLine($&quot;{tabs}{{{id}}} {name}&quot;);</span>
+			}
+		}
+
+		_testOutputHelper.WriteLine($<span class="c-string">&quot;{sw.ElapsedMilliseconds} ms&quot;</span>);
+		_testOutputHelper.WriteLine($<span class="c-string">&quot;{i:N0} records&quot;</span>);
+		_testOutputHelper.WriteLine($<span class="c-string">&quot;{i/50:N0} pages&quot;</span>);
+	}
+}
+
+<span class="c-keyword">private</span> <span class="c-keyword">void</span> MakeChildren(Guid parentId, <span class="c-keyword">int</span> depth, List<span class="c-operator">&lt;</span>Tuple<span class="c-operator">&lt;</span>Guid, Guid<span class="c-operator">&gt;</span><span class="c-operator">&gt;</span> list)
+{
+	<span class="c-keyword">if</span>(depth <span class="c-operator">==</span> <span class="c-number">0</span>)
+	{
+		<span class="c-keyword">return</span>;
+	}
+	<span class="c-keyword">for</span>(<span class="c-keyword">var</span> i <span class="c-operator">=</span> <span class="c-number">0</span>; i <span class="c-operator">&lt;</span> <span class="c-number">10</span>; i<span class="c-operator">++</span>)
+	{
+		<span class="c-keyword">var</span> newId <span class="c-operator">=</span> Guid.NewGuid();
+
+		list.Add(<span class="c-keyword">new</span> (newId, parentId));
+		MakeChildren(newId, depth<span class="c-operator">-</span><span class="c-number">1</span>, list);
+	}
+}
+</code></pre>
+
+
+<i style="color: var(--text-muted)">Written on August 1, 2021</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

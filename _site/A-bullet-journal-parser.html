@@ -1,0 +1,64 @@
+<html lang="en-US">
+<head>
+    <title>A bullet journal parser</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>A bullet journal parser</h2>
+
+<p>I wrote a state machine that can parse the following bullet journal syntax into a tree structure. I tried to leverage C# 9 features to learn more about them.</p>
+<p>The code is <a href="https://gist.github.com/ryanohs/caf769dbe554ded0fec151a53a17f8ee">here</a></p>
+<pre><code>A title level node
+- Bullet types
+    - Note
+    * Task/to do
+    o Event
+    ! Inspiration
+- Supports tabs or spaces (4 spaces = tab)
+- Tech details
+    - Written in C# 9
+    - #nullable enable = object references can't be null unless explicitly declared nullable
+    - It uses a state machine pattern
+    - The parser uses an immutable record type for tracking state
+    - Then node type is not quite immutable
+        - It holds two StringBuilder references
+        - And its child collection is mutable
+</code></pre>
+<p>I really like the record types and return with syntax. I found this code very easy to rationalize about.</p>
+<pre><code>return state with
+{
+    CurrentIndentDepth = 0,
+    CurrentState = State.Start,
+    NodeType = NodeType.Title
+};
+</code></pre>
+<p>This is awesome! C# is looking more like F#.</p>
+<pre><code>public record Transition(State State, Token Token);
+</code></pre>
+<p>The new switch syntax is also very compact and easy to read.</p>
+<pre><code>return c switch
+{
+    '-' =&gt; NodeType.Note,
+    '*' =&gt; NodeType.Task,
+    'o' =&gt; NodeType.Event,
+    '!' =&gt; NodeType.Inspiration,
+    _ =&gt; throw new ArgumentOutOfRangeException(nameof(c), c, null)
+};
+</code></pre>
+
+
+<i style="color: var(--text-muted)">Written on July 25, 2021</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

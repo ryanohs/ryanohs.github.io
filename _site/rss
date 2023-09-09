@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+ <title>Ryan Ohs' website</title>
+ <link>https://ryanohs.github.io/</link>
+ <lastBuildDate>Sat, 09 Sep 2023 20:59:32 GMT</lastBuildDate>
+ <pubDate>Sat, 09 Sep 2023 20:59:32 GMT</pubDate>
+ <ttl>1800</ttl>
+<item>
+<title>MacOS quick action to save active tab as shortcut</title>
+<description><![CDATA[<p>When I want to save a shortcut to a website in a folder in Finder, I had an awkward workflow to position the Finder window and browser window such that I could drag the icon from the nav bar into the Finder window. To make this simpler, I created a quick action in Automator.</p>
+]]></description>
+<link>https://ryanohs.github.io/macos-quick-action-to-save-active-tab-as-shortcut</link>
+<pubDate>Wed, 03 May 2023 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>My first few days with C</title>
+<description><![CDATA[<p>This week I started relearning C. I used C++ for a year in college and about a decade ago I worked on a microcontroller project in C, but my familiarity with C is fairly rusty. I picked up a copy of K&amp;R and started by reading the first few chapters and doing the exercises in a text editor and compiling with gcc.</p>
+]]></description>
+<link>https://ryanohs.github.io/My-first-few-days-with-C</link>
+<pubDate>Thu, 30 Mar 2023 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>A printable calendar</title>
+<description><![CDATA[<p><a href="https://ryanohs.github.io/demos/Calendar.html">Demo</a></p>
+]]></description>
+<link>https://ryanohs.github.io/A-printable-calendar</link>
+<pubDate>Tue, 04 Oct 2022 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Finding recent files in MacOS Monterey</title>
+<description><![CDATA[<p>The result of this is you are able to type <code>recent</code> at any terminal to get a listing of recently modified documents.</p>
+]]></description>
+<link>https://ryanohs.github.io/Finding-recent-files-in-macos-monterey</link>
+<pubDate>Wed, 12 Oct 2022 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Some project ideas</title>
+<description><![CDATA[<p>Some of my project ideas. Some are tools I want. Some are technologies I want to learn. Some are just to dive deeper into a subject.</p>
+]]></description>
+<link>https://ryanohs.github.io/Some-project-ideas</link>
+<pubDate>Fri, 03 Sep 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Idea generation notes for entrepreneurs</title>
+<description><![CDATA[<p>Write 10 ideas every day - that's 3,650 per year</p>
+]]></description>
+<link>https://ryanohs.github.io/Idea-generation-notes-for-entrepreneurs</link>
+<pubDate>Fri, 03 Sep 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Debugging Stored Procedures</title>
+<description><![CDATA[<p>See the demo <a href="https://ryanohs.github.io/demos/Transform.html">here</a>.</p>
+]]></description>
+<link>https://ryanohs.github.io/Debugging-Stored-Procedures</link>
+<pubDate>Sat, 14 Aug 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Transforming Word Documents</title>
+<description><![CDATA[<p>I have tons of notes in Word documents which I'd like to import into a my bullet based knowledge tracker. Thankfully my notes follow a well structured format so I set out to write a utility to import these files.</p>
+]]></description>
+<link>https://ryanohs.github.io/Transforming-Word-documents</link>
+<pubDate>Sun, 01 Aug 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Is SQLite fast enough?</title>
+<description><![CDATA[<p>Yes, yes it is.</p>
+]]></description>
+<link>https://ryanohs.github.io/Is-sqlite-fast-enough</link>
+<pubDate>Sun, 01 Aug 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Knuth's prime algorithm</title>
+<description><![CDATA[<p>For several years I’ve intended to check out Donald Knuth’s <em>The Art of Computer Programming</em>. I finally picked up a copy and hopefully I won’t regret it. I’ve been programming for well over a decade, but had very little formal computer science education (only Algorithms 101). Knuth’s book aims to lay down a mathematical foundation for programming. He’s been releasing new volumes for over 50 years. I didn’t realize how encyclopedic this book was until I flipped through it.</p>
+]]></description>
+<link>https://ryanohs.github.io/Knuths-prime-algorithm</link>
+<pubDate>Mon, 05 Jul 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>A bullet journal parser</title>
+<description><![CDATA[<p>I wrote a state machine that can parse the following bullet journal syntax into a tree structure. I tried to leverage C# 9 features to learn more about them.</p>
+]]></description>
+<link>https://ryanohs.github.io/A-bullet-journal-parser</link>
+<pubDate>Sun, 25 Jul 2021 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>Stack operations in F#</title>
+<description><![CDATA[<p>In this post, I'm going to combine some linear list concepts from <em>The Art of Programming</em> with my recent introduction to F# and immutable programming. Section 2.2.1 covers various types of singly linked list structures. I'm going to implement a few of these operations in F#.</p>
+]]></description>
+<link>https://ryanohs.github.io/Stack-operations-in-fsharp</link>
+<pubDate>Sun, 18 Jul 2021 00:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

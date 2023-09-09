@@ -1,0 +1,60 @@
+<html lang="en-US">
+<head>
+    <title>Finding recent files in MacOS Monterey</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Finding recent files in MacOS Monterey</h2>
+
+<p>The result of this is you are able to type <code>recent</code> at any terminal to get a listing of recently modified documents.</p>
+<p>The Recents list in Finder was not sufficient for me because it does not include all file types, such as .webloc.</p>
+<p>The <code>recent</code> function accepts an argument in the form of a time offset such as 1d, 2d, 1w, 1m, etc.</p>
+<p>e.g., All files modified in the last 3 days: <code>recent 3d</code></p>
+<ol>
+<li>
+<p>Start up Terminal</p>
+</li>
+<li>
+<p>Type <code>cd ~/</code> to go to your home folder</p>
+</li>
+<li>
+<p>Type <code>touch .zshrc</code> to create your new file</p>
+</li>
+<li>
+<p>Edit .zshrc with your favorite editor (or you can just type <code>open -e .zshrc</code> to open it in TextEdit. Include this in the file and save it.</p>
+<pre><code> recent() {
+   find ~/Documents -newermt &quot;`date -v-${1:-1d} +%F`&quot; -type f \! -name .DS_Store
+ }
+</code></pre>
+</li>
+<li>
+<p>Quit and restart Terminal</p>
+</li>
+<li>
+<p>Type <code>recent</code> to list recently modified files</p>
+</li>
+</ol>
+<p>Directions based on <a href="https://stackoverflow.com/a/8967864">this StackOverflow answer</a></p>
+<p>Enhancement ideas:</p>
+<ul>
+<li>Allow the directory to be specified and default to ~/Documents, e.g., <code>recent 1w .</code></li>
+<li>Format output to colorize by file type</li>
+<li>Format output to bold leaf directory name</li>
+</ul>
+
+
+<i style="color: var(--text-muted)">Written on October 12, 2022</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

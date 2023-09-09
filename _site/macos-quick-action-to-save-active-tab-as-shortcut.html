@@ -1,0 +1,62 @@
+<html lang="en-US">
+<head>
+    <title>MacOS quick action to save active tab as shortcut</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>MacOS quick action to save active tab as shortcut</h2>
+
+<p>When I want to save a shortcut to a website in a folder in Finder, I had an awkward workflow to position the Finder window and browser window such that I could drag the icon from the nav bar into the Finder window. To make this simpler, I created a quick action in Automator.</p>
+<ol>
+<li>
+<p>Launch Automator</p>
+</li>
+<li>
+<p>File &gt; New</p>
+</li>
+<li>
+<p>Choose Quick Action</p>
+</li>
+<li>
+<p>Add a Run Applescript block and add this code:</p>
+<pre><code> <span class="apple-keyword">on</span> run {input, parameters}
+   <span class="apple-keyword">set</span> theURL <span class="apple-keyword">to</span> (<span class="apple-keyword">the</span> clipboard <span class="apple-keyword">as</span> text)
+   <span class="apple-keyword">set</span> theName <span class="apple-keyword">to</span> <span class="apple-string">&quot;Untitled URL&quot;</span>
+   <span class="apple-keyword">tell</span> application <span class="apple-string">&quot;Brave Browser&quot;</span> <span class="apple-keyword">to</span> <span class="apple-keyword">set</span> theName <span class="apple-keyword">to</span> title <span class="apple-keyword">of</span> active tab <span class="apple-keyword">of</span> <span class="apple-keyword">front</span> window
+   <span class="apple-keyword">tell</span> application <span class="apple-string">&quot;Brave Browser&quot;</span> <span class="apple-keyword">to</span> <span class="apple-keyword">set</span> theURL <span class="apple-keyword">to</span> URL <span class="apple-keyword">of</span> active tab <span class="apple-keyword">of</span> <span class="apple-keyword">front</span> window
+   <span class="apple-keyword">tell</span> application <span class="apple-string">&quot;Finder&quot;</span>
+     <span class="apple-keyword">set</span> currentDir <span class="apple-keyword">to</span> target <span class="apple-keyword">of</span> Finder window <span class="apple-number">1</span> <span class="apple-keyword">as</span> alias
+     make new internet location file <span class="apple-keyword">at</span> currentDir <span class="apple-keyword">to</span> theURL <span class="apple-keyword">with</span> properties {name:theName}
+   <span class="apple-keyword">end</span> <span class="apple-keyword">tell</span>
+   <span class="apple-keyword">return</span> input
+ <span class="apple-keyword">end</span> run
+</code></pre>
+</li>
+<li>
+<p>Save it</p>
+</li>
+<li>
+<p>In the Finder menu open Services &gt; Services Preferences</p>
+</li>
+<li>
+<p>Check the entry for your new action and add a keyboard shortcut.</p>
+</li>
+</ol>
+<p>Now when you are in any Finder window, you can press your keyboard shortcut and the last active tab in Brave will be saved as a webloc file in the open directory. The file name will be the page title.</p>
+
+
+<i style="color: var(--text-muted)">Written on May 3, 2023</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

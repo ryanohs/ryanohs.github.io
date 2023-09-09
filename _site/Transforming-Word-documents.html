@@ -1,0 +1,45 @@
+<html lang="en-US">
+<head>
+    <title>Transforming Word Documents</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Transforming Word Documents</h2>
+
+<p>I have tons of notes in Word documents which I'd like to import into a my bullet based knowledge tracker. Thankfully my notes follow a well structured format so I set out to write a utility to import these files.</p>
+<p>The documents are structured using heading styles as well as paragraphs and bulleted or numbered lists. I've used various highlight colors to identify outstanding tasks or things I want to flag.</p>
+<p>Here is an example of what the notes look like in Word.</p>
+<p><img src="/images/docxsample.PNG" alt="Word Sample" /></p>
+<p>I also have sections of copy-pasted text blocks (usually from an email or other reference document) which I indented in, kind of like a blockquote. To capture these in my system I added a TextBlock property to the node model.</p>
+<p>I started by reading about the docx file format. I knew docx is actually a zip archive of XML files. <a href="https://www.toptal.com/xml/an-informal-introduction-to-docx">This post</a> was very helpful in explaining the structure of the docx file.</p>
+<p>Then I found an existing open source .NET <a href="https://github.com/xceedsoftware/DocX">library</a> which already implemented most of the parsing logic I needed. I was able to write my transformer using this. The only thing I had to manually find was the paraId attribute, which I'm planning to use for change tracking in a future enchancement.</p>
+<p>This is what the result of the transform looks like. Note that the highlighted line has a distinct bullet style. I will feed this into the bullet journal parser I wrote in a previous <a href="/A-bullet-journal-parser">post</a>. I prefered transforming to this intermediate format because it was easy to view the output for debugging.</p>
+<pre><code>- 11-2-2020
+	- Getting Unstuck
+		- Emotions of happiness
+			- Pleasure 	vs	Pain
+			- Happiness 	vs 	Sadness
+			- Joy 		vs 	Sorrow
+		- Bliss – a maintainable state
+			- Must be nourished
+			! Watch what you consume = inputs to brain
+</code></pre>
+<p>A future enhancement will be to support formatting like bold, italics, etc.</p>
+<p>The code is available <a href="https://gist.github.com/ryanohs/795caa5e3be0f8c9d9e0c6d1efd88989">here</a>. Nothing fancy.</p>
+
+
+<i style="color: var(--text-muted)">Written on August 1, 2021</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<html lang="en-US">
+<head>
+    <title>A printable calendar</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>A printable calendar</h2>
+
+<p><a href="https://ryanohs.github.io/demos/Calendar.html">Demo</a></p>
+<p>Recently I read about modern CSS layout technologies including CSS Grids. To practice, I recreated a tool I use to generated printable calendars. I have a multi-year collection of print outs from print-a-calendar.com. I wanted my tool to mimic the printed style of that site.</p>
+<p>I started by creating a static calendar for the current month. CSS Grid may not be the ideal technology for this sort of a layout, but I was determined. The cell borders are only 1px thick. Since CSS grid does not support border-collapse like tables do, I had to define the borders in a piecemeal fashion. The calendar border is a solid border on the grid container. Each calendar cell defines a right and bottom border.</p>
+<pre><code>.cell {
+    border-right: solid 1px #ccc;
+    border-bottom: solid 1px #ccc;
+}
+</code></pre>
+<p>However this leaves an extra thick border on the right column and bottom row. To eliminate this I used pseudo-selectors to remove the borders from cells in the right column and bottom row.</p>
+<pre><code>.cell:nth-last-child(-n+7) {
+    border-bottom: none;
+}
+
+.cell:nth-child(7n) {
+    border-right: none;
+}
+</code></pre>
+<p>Another challenge I ran into was getting the calendar to display full screen in the browser and on paper. To get it full screen in the browser, I made the entire body into a flexbox and set the calendar to auto-grow. I also had to give the body a computed height. Setting body height to 100vh does not work because the body tag padding is outside the box height. I probably could have used a wrapper element around the entire page contents, but I was trying to avoid that.</p>
+<pre><code>body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 10px;
+    min-height: calc(100% - 20px);
+}
+
+#calendar {
+    flex: 1 1 auto;
+}
+</code></pre>
+<p>The body height is not used when printing so I had to use a print media query to set the page height to 98%. Any larger value forced the calendar onto a second page.</p>
+<p>Once formatting was correct, I replaced the calendar markup with elements generated in javascript. I added a previous and next link to navigate months and hid those elements when printing.</p>
+<p>I only tested in Chrome.</p>
+<p>The final result is hosted <a href="https://ryanohs.github.io/demos/Calendar.html">here</a></p>
+
+
+<i style="color: var(--text-muted)">Written on October 4, 2022</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

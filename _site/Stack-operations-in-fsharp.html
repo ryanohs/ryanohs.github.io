@@ -1,0 +1,97 @@
+<html lang="en-US">
+<head>
+    <title>Stack operations in F#</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Stack operations in F#</h2>
+
+<p>In this post, I'm going to combine some linear list concepts from <em>The Art of Programming</em> with my recent introduction to F# and immutable programming. Section 2.2.1 covers various types of singly linked list structures. I'm going to implement a few of these operations in F#.</p>
+<p>Instead of utilizing the built in list type, I'm implementing my own for the sake of exercise. This will consist of a Stack class with a Head pointer to the first Node (or None). The Node class will have a value and a pointer to the next node (or None).</p>
+<pre><code><span class="fs-keyword">type</span> Node(value, next:<span class="fs-monad">Option</span><span class="fs-operator">&lt;</span>Node<span class="fs-operator">&gt;</span>) <span class="fs-operator">=</span>
+    <span class="fs-keyword">member</span> _.Value <span class="fs-operator">=</span> value
+    <span class="fs-keyword">member</span> _.Next <span class="fs-operator">=</span> next
+
+<span class="fs-keyword">type</span> Stack(head:<span class="fs-monad">Option</span><span class="fs-operator">&lt;</span>Node<span class="fs-operator">&gt;</span>) <span class="fs-operator">=</span> 
+    <span class="fs-keyword">new</span>() <span class="fs-operator">=</span> <span class="fs-keyword">new</span> Stack(<span class="fs-monad">None</span>)
+    <span class="fs-keyword">member</span> _.Head <span class="fs-operator">=</span> head
+</code></pre>
+<ol>
+<li>Gain access to the kth node of the list.</li>
+</ol>
+<p>Whenever you would iterate in C#, in F# you should think recursive. My function starts at the head node and recursively moves to the next node and decrements k until it's 0. If the target index is greater than the stack length, then it throws an exception.</p>
+<pre><code><span class="fs-keyword">let</span> getn k (stack:Stack) <span class="fs-operator">=</span>
+    <span class="fs-keyword">let</span> <span class="fs-keyword">rec</span> inner x (node:<span class="fs-monad">Option</span><span class="fs-operator">&lt;</span>Node<span class="fs-operator">&gt;</span>) <span class="fs-operator">=</span>
+        <span class="fs-keyword">match</span> (x, node) <span class="fs-keyword">with</span> 
+        | (_, <span class="fs-monad">None</span>) <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> failwith <span class="fs-string">&quot;out of range&quot;</span>
+        | (<span class="fs-number">0</span>, <span class="fs-monad">Some</span> n) <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> n.Value
+        | (x, <span class="fs-monad">Some</span> n) <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> inner (x<span class="fs-operator">-</span><span class="fs-number">1</span>) n.Next
+    inner k stack.Head
+</code></pre>
+<ol start="2">
+<li>Insert a new node before the kth node.</li>
+</ol>
+<p>Because I'm implementing a stack structure, I'm restricting k to 0. All inserts will be at the head/top of the stack. This makes insertion trivial to implement. It's also ideal for immutable structures because the existing nodes of the stack can be reused. This is an O(1) operation.</p>
+<pre><code>Stack A:        1 -&gt; 2 -&gt; 3
+Push 4
+Stack A':  4 -&gt; A
+Or A':     4 -&gt; 1 -&gt; 2 -&gt; 3
+</code></pre>
+<p>Code:</p>
+<pre><code><span class="fs-keyword">let</span> push value (stack:Stack) <span class="fs-operator">=</span>
+    <span class="fs-keyword">new</span> Stack(<span class="fs-monad">Some</span>(<span class="fs-keyword">new</span> Node(value, stack.Head)))
+</code></pre>
+<ol start="3">
+<li>Return and delete the first node.</li>
+</ol>
+<p>Again I'm going to restrict k to 0 so all deletions happen at the top of the stack. The existing nodes of the stack are reused. Only a new Stack object is created with Head pointing to the second node of the original stack. This is also O(1).</p>
+<pre><code>Stack A:   1 -&gt; 2 -&gt; 3 -&gt; 4
+Pop
+Stack A':       2 -&gt; 3 -&gt; 4
+</code></pre>
+<p>Because the original stack is immutable, we can't just return the popped node. We must also return the new stack. I do this by returning a tuple.</p>
+<pre><code><span class="fs-keyword">let</span> pop (stack:Stack) <span class="fs-operator">=</span>
+    <span class="fs-keyword">match</span> stack.Head <span class="fs-keyword">with</span>
+    | <span class="fs-monad">Some</span> h <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> (<span class="fs-monad">Some</span>(h.Value), <span class="fs-keyword">new</span> Stack(h.Next))
+    | <span class="fs-monad">None</span> <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> (<span class="fs-monad">None</span>, stack)
+</code></pre>
+<ol start="4">
+<li>Delete the kth node.</li>
+</ol>
+<p>This is not really an operation you would want to do on an immutable list or stack, but I wanted to try writing it anyway. This is an O(N) operation because the stack and all of its nodes preceding the deleted node must be copied to a new stack since we cannot mutate the Head or Next pointer to skip the deleted node.</p>
+<pre><code>A:     1 -&gt; 2 -&gt; 3 -&gt; 4
+Delete 2
+A':    1'   -&gt;   3 -&gt; 4
+</code></pre>
+<p>Code:</p>
+<pre><code><span class="fs-keyword">let</span> delete k (stack:Stack) <span class="fs-operator">=</span>
+    <span class="fs-keyword">let</span> <span class="fs-keyword">rec</span> nextNode i (node:<span class="fs-monad">Option</span><span class="fs-operator">&lt;</span>Node<span class="fs-operator">&gt;</span>) <span class="fs-operator">=</span>
+        <span class="fs-keyword">match</span> (i, node) <span class="fs-keyword">with</span>
+        | (_, <span class="fs-monad">None</span>) <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> <span class="fs-monad">None</span>
+        | (i, <span class="fs-monad">Some</span> n) <span class="fs-keyword">when</span> i <span class="fs-operator">=</span> k <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> n.Next
+        | (i, <span class="fs-monad">Some</span> n) <span class="fs-operator">-</span><span class="fs-operator">&gt;</span> <span class="fs-monad">Some</span>(<span class="fs-keyword">new</span> Node(n.Value, nextNode (i<span class="fs-operator">+</span><span class="fs-number">1</span>) n.Next))
+    <span class="fs-keyword">new</span> Stack(nextNode <span class="fs-number">0</span> stack.Head)
+</code></pre>
+<p>F#'s built in list type is a singly linked list so this exercise was a good introduction to the limitations of using that type. If you implement your own stack type (don't) using the built in list, there are F# syntax features like head::rest pattern matching that simply this code even further. I found <a href="https://swlaschin.gitbooks.io/fsharpforfunandprofit/content/posts/stack-based-calculator.html">this post</a> with some great examples.</p>
+<p>Another data structure covered in 2.2.1 is deques (&quot;decks&quot;) which are a type of list optimized for inserts and deletes at the beginning and end only. <a href="http://jackfoxy.com/double-ended-queues-for-fsharp/">This post</a> has an explanation of how one was implemented in F#. They used two lists internally. A head list and a reversed tail list.</p>
+<pre><code>Head: A -&gt; B -&gt; C -&gt; D
+Tail: Z -&gt; Y -&gt; X -&gt; W
+</code></pre>
+<p>As the lists change in length, there is a mechanism shuffle items so neither list is more than double the length of the other list to keep the performance relatively consistent on both ends. An interesting observation is reversing a deque is an O(1) operation.</p>
+
+
+<i style="color: var(--text-muted)">Written on July 18, 2021</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

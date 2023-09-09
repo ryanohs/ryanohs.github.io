@@ -1,0 +1,158 @@
+<html lang="en-US">
+<head>
+    <title>Knuth's prime algorithm</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Knuth's prime algorithm</h2>
+
+<p>For several years I’ve intended to check out Donald Knuth’s <em>The Art of Computer Programming</em>. I finally picked up a copy and hopefully I won’t regret it. I’ve been programming for well over a decade, but had very little formal computer science education (only Algorithms 101). Knuth’s book aims to lay down a mathematical foundation for programming. He’s been releasing new volumes for over 50 years. I didn’t realize how encyclopedic this book was until I flipped through it.</p>
+<p>Immediately I discovered that I’m going to have to think differently. I program primarily in high level object oriented languages. Knuth defines his algorithms in pseudocode and a made up assembly language for a 1960’s style processor. As an introduction to this processor he presents an algorithm for computing the first 500 primes. Before I read his algorithm, I set the book aside and tried it myself in C#. Then I returned to Knuth’s book and identified three optimizations that should have been obvious. (It was very late)</p>
+<ol>
+<li>
+<p>Don’t check any even numbers</p>
+</li>
+<li>
+<p>Don’t check divisibility by 2</p>
+</li>
+<li>
+<p>Only check primes less than sqrt(n)</p>
+</li>
+</ol>
+<p>My resulting code:</p>
+<pre><code><span class="c-keyword">var</span> primes <span class="c-operator">=</span> <span class="c-keyword">new</span> <span class="c-keyword">int</span>[<span class="c-number">500</span>];
+primes[<span class="c-number">0</span>] <span class="c-operator">=</span> <span class="c-number">2</span>;
+<span class="c-keyword">var</span> found <span class="c-operator">=</span> <span class="c-number">1</span>;
+<span class="c-keyword">var</span> n <span class="c-operator">=</span> <span class="c-number">3</span>;
+<span class="c-keyword">while</span>(found <span class="c-operator">&lt;</span> <span class="c-number">500</span>)
+{
+	<span class="c-comment">// for each odd n = 3, 5, 7, ....</span>
+	<span class="c-comment">// check if n has a divisor in the found primes less than sqrt(n)</span>
+	<span class="c-comment">// if n has no prime divisor, n is prime</span>
+
+	<span class="c-keyword">var</span> foundDivisor <span class="c-operator">=</span> <span class="c-keyword">false</span>;
+	<span class="c-keyword">var</span> sqrt <span class="c-operator">=</span> Math.Sqrt(n);
+	<span class="c-keyword">for</span>(<span class="c-keyword">int</span> i <span class="c-operator">=</span> <span class="c-number">0</span>; i <span class="c-operator">&lt;</span> found <span class="c-operator">&amp;&amp;</span> primes[i] <span class="c-operator">&lt;</span><span class="c-operator">=</span> sqrt <span class="c-operator">&amp;&amp;</span> <span class="c-operator">!</span>foundDivisor; i<span class="c-operator">++</span>) <span class="c-comment">// iterate found primes up to sqrt(n)</span>
+	{
+		<span class="c-keyword">if</span>(n <span class="c-operator">%</span> primes[i] <span class="c-operator">==</span> <span class="c-number">0</span>)
+		{
+			<span class="c-comment">// we found a divisor so n is not prime</span>
+			foundDivisor <span class="c-operator">=</span> <span class="c-keyword">true</span>;
+		}
+	}
+
+	<span class="c-keyword">if</span>(<span class="c-operator">!</span>foundDivisor)
+	{
+		<span class="c-comment">// we found a new prime</span>
+		primes[found] <span class="c-operator">=</span> n;
+		found<span class="c-operator">++</span>;
+	}
+
+	n <span class="c-operator">+</span><span class="c-operator">=</span> <span class="c-number">2</span>; <span class="c-comment">// next odd n</span>
+}
+</code></pre>
+<p>I recognize this may be a naïve solution but at least it’s easy to understand.</p>
+<p>Returning to Knuth’s algorithm, I initially found it difficult to follow. He doesn’t use any programming language abstractions like loops but rather uses GOTO statements for flow control. I translated his algorithm into C# using while loops, but the break logic was not very intuitive and I was also curious about the q &lt;= primes[k] conditional. What is he up to there? Also, he uses 1 indexed arrays so I left an empty element at the start of the array to avoid -1 everywhere.</p>
+<pre><code><span class="c-keyword">var</span> primes <span class="c-operator">=</span> <span class="c-keyword">new</span> <span class="c-keyword">int</span>[<span class="c-number">501</span>];
+<span class="c-keyword">int</span> n,
+	j,   <span class="c-comment">// number of primes found</span>
+	k,   <span class="c-comment">// indexer</span>
+	q,
+	r;
+
+primes[<span class="c-number">1</span>] <span class="c-operator">=</span> <span class="c-number">2</span>;
+n <span class="c-operator">=</span> <span class="c-number">3</span>;
+j <span class="c-operator">=</span> <span class="c-number">1</span>;
+
+<span class="c-keyword">while</span> (<span class="c-keyword">true</span>)
+{
+	j<span class="c-operator">++</span>;
+	primes[j] <span class="c-operator">=</span> n;
+
+	<span class="c-keyword">if</span> (j <span class="c-operator">==</span> <span class="c-number">500</span>)
+	{
+		<span class="c-keyword">break</span>;
+	}
+
+	<span class="c-keyword">while</span> (<span class="c-keyword">true</span>)
+	{
+		n <span class="c-operator">+</span><span class="c-operator">=</span> <span class="c-number">2</span>;
+		k <span class="c-operator">=</span> <span class="c-number">2</span>;
+
+		<span class="c-keyword">while</span> (<span class="c-keyword">true</span>)
+		{
+			q <span class="c-operator">=</span> n <span class="c-operator">/</span> primes[k];
+			r <span class="c-operator">=</span> n <span class="c-operator">%</span> primes[k];
+
+			<span class="c-keyword">if</span> (r <span class="c-operator">==</span> <span class="c-number">0</span>)
+			{
+				<span class="c-keyword">break</span>;
+			}
+
+			<span class="c-keyword">if</span>(q <span class="c-operator">&lt;</span><span class="c-operator">=</span> primes[k])
+			{
+				<span class="c-keyword">break</span>;
+			}
+
+			k<span class="c-operator">++</span>;
+		}
+
+		<span class="c-keyword">if</span>(r <span class="c-operator">!=</span> <span class="c-number">0</span>)
+		{
+			<span class="c-keyword">if</span>(q <span class="c-operator">&lt;</span><span class="c-operator">=</span> primes[k])
+			{
+				<span class="c-keyword">break</span>;
+			}
+		}
+	}
+}
+</code></pre>
+<p>The reason Knuth’s algorithm is so different from mine is that I cheated. I used a math library to compute square roots. Knuth uses an algebraic trick to determine when he’s tested all the prime factors below the square root of n. He leaves proving this as an exercise. I had to think about it for far longer than I care to admit.</p>
+<p>His test of primality algorithm is:</p>
+<blockquote>
+<p>Let p<Sub>k</sub> be the k<sup>th</sup> element of the set of primes in increasing order.
+(2, 3, 5, …)</p>
+<p>Let n be the integer we are testing for primality.</p>
+<p>Let k be the integer 2. (The first prime divisor we will test is 3)</p>
+<p><em>Loop:</em></p>
+<p>Determine q and r for n = q*p<Sub>k</sub> + r where 0 &lt;= r &lt; p<Sub>k</sub></p>
+<p>If r = 0, n is not prime.</p>
+<p>If q &lt;= p<Sub>k</sub>, n is prime; otherwise, increment k and loop.</p>
+</blockquote>
+<p>This last test is what I wanted to understand. This clearly has to do with checking if p<Sub>k</sub> &gt; sqrt(n) or equivalently if p<Sub>k</sub><sup>2</sup> &gt; n.</p>
+<p>Let’s consider three cases.</p>
+<p>If q = p, then p<Sub>k</sub><sup>2</sup> &lt; n</p>
+<blockquote>
+<p>We know that p<Sub>k</sub><sup>2</sup> != n because then r = 0 and the algorithm would not have reached this step. We can ignore this case.</p>
+<p>In the case p<Sub>k</sub> &lt; sqrt(n), we can show that p<Sub>k</sub> is the last prime we need to test by showing that p<Sub>k+1</sub> is larger than sqrt(n).</p>
+<p>The next possible prime we would test, p<Sub>k+1</sub>, would at minimum be p<Sub>k</sub>+2. Squaring p<Sub>k</sub>+2 gives (p<Sub>k</sub>+2)<sup>2</sup> = p<Sub>k</sub><sup>2</sup> +4p<Sub>k</sub>+4. We also know that sqrt(n) = p<Sub>k</sub><sup>2</sup> + r where r &lt; p<Sub>k</sub>. But clearly p<Sub>k</sub><sup>2</sup> +4p<Sub>k</sub>+4 &gt; p<Sub>k</sub><sup>2</sup> + r. Thus p<Sub>k+1</sub> is larger than sqrt(n) so we do not need to test further.</p>
+<p>n is prime.</p>
+</blockquote>
+<p>If q &lt; p<Sub>k</sub>, then p<Sub>k</sub><sup>2</sup> &gt; q*p<Sub>k</sub> + r, by substitution is p<Sub>k</sub><sup>2</sup> &gt; n, and thus p<Sub>k</sub> is not possibly an even divisor of n. n is prime.</p>
+<p>If q &gt; p<Sub>k</sub>, then p<Sub>k</sub><sup>2</sup> &lt; n by observation that p<Sub>k</sub><sup>2</sup> &lt; q*p<Sub>k</sub> + r.</p>
+<blockquote>
+<p>In this case the algorithm cannot yet determine primality and requires
+a loop to test the next prime. This tripped me up initially. While it
+is possible that p<Sub>k</sub> is the largest prime less than or equal
+to sqrt(n), the algorithm cannot know that until it tests the next
+largest prime. This results in the algorithm sometimes testing
+divisibility by primes larger than sqrt(n).</p>
+</blockquote>
+<p>There may be a better way to explain this (I have not referred to the back of the book answer key), but it was a good exercise. Now that I understand how intensive this book is, I’m going to be much more selective about what sections I’m reading. I understand there’s a lot of great history in this book, but also might redirect my attention to a more modern algorithms book.</p>
+
+
+<i style="color: var(--text-muted)">Written on July 5, 2021</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>
