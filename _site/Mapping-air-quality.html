@@ -1,0 +1,31 @@
+<html lang="en-US">
+<head>
+    <title>Mapping air quality</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Mapping air quality</h2>
+
+<p>See the <a href="/demos/aqi/map.html">map</a>.</p>
+<p>The smoke from Canadian wildfires affecting the US from coast to coast got me wondering if there was anywhere in the northern part of the country not impacted historically. I found a <a href="https://aqs.epa.gov/aqsweb/airdata/download_files.html">dataset</a> of historical AQI by county on the EPA's website.</p>
+<p>I created a US county map with d3.js and colored each county based on the air quality index. Unfortunately the EPA's dataset is very spotty, covering only about 1/3 of counties. I was unable to derive an answer to my original question.</p>
+<p>I used the Albers geoJSON dataset and learned about FIPS codes for mapping the EPA data to the Albers data. The EPA's county names did not completely align with the FIPS dataset so I altered the FIPS data since it was a single file to modify compared to many data files. I excluded any data points in the EPA data that did not easily map to the FIPS dataset.</p>
+<p>I publishing the resulting <a href="/demos/aqi/map.html">maps</a> because I'll end up reusing the code for another project.</p>
+<p>I also published a <a href="https://gist.github.com/ryanohs/b59b639c38a3158f158c9ed1e31f787b">script</a> to download the EPA data.</p>
+
+
+<i style="color: var(--text-muted)">Written on September 9, 2023</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

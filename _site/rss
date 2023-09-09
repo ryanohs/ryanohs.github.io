@@ -3,9 +3,16 @@
 <channel>
  <title>Ryan Ohs' website</title>
  <link>https://ryanohs.github.io/</link>
- <lastBuildDate>Sat, 09 Sep 2023 21:23:35 GMT</lastBuildDate>
- <pubDate>Sat, 09 Sep 2023 21:23:35 GMT</pubDate>
+ <lastBuildDate>Sat, 09 Sep 2023 22:39:25 GMT</lastBuildDate>
+ <pubDate>Sat, 09 Sep 2023 22:39:25 GMT</pubDate>
  <ttl>1800</ttl>
+<item>
+<title>Mapping air quality</title>
+<description><![CDATA[<p>See the <a href="/demos/aqi/map.html">map</a>.</p>
+]]></description>
+<link>https://ryanohs.github.io/Mapping-air-quality</link>
+<pubDate>Sat, 09 Sep 2023 00:00:00 GMT</pubDate>
+</item>
 <item>
 <title>MacOS quick action to save active tab as shortcut</title>
 <description><![CDATA[<p>When I want to save a shortcut to a website in a folder in Finder, I had an awkward workflow to position the Finder window and browser window such that I could drag the icon from the nav bar into the Finder window. To make this simpler, I created a quick action in Automator.</p>
