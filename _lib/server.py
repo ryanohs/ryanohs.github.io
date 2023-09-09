@@ -44,7 +44,7 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     server_address = ('', 8000)  # Change the port as needed
-    os.chdir('_site')
+    os.chdir('docs')
     httpd = http.server.HTTPServer(server_address, MyRequestHandler)
     print('Server started on port 8000...')
     httpd.serve_forever()
