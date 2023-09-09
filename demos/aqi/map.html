@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Map</title>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+</head>
+<body>
+    <h1>Days With AQI Not "Good"</h1>
+
+    <div style="margin-bottom: 10px">
+      <button id="yr2015">2015</button>
+      <button id="yr2016">2016</button>
+      <button id="yr2017">2017</button>
+      <button id="yr2018">2018</button>
+      <button id="yr2019">2019</button>
+      <button id="yr2020">2020</button>
+      <button id="yr2021">2021</button>
+      <button id="yr2022">2022</button>
+    </div>
+    
+    <svg id="my_dataviz" width="825" height="515"></svg>
+
+    <script type="module">
+        import fips from "./fips.js"
+
+        // The svg
+        var svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
+        
+        // Map and projection
+        var path = d3.geoPath();
+        var projection = d3.geoMercator()
+           .scale(800)
+        //   .center([0,20])
+            .translate([1750, 800]);
+        ;
+
+        // Data and color scale
+        var data = d3.map();
+        var colorScale = d3.scaleSequential(x => x == 0 ? "darkgray" : d3.interpolateOranges(x));
+
+        d3.select("#yr2015").on("click", function() {loadData(2015);});
+        d3.select("#yr2016").on("click", function() {loadData(2016);});
+        d3.select("#yr2017").on("click", function() {loadData(2017);});
+        d3.select("#yr2018").on("click", function() {loadData(2018);});
+        d3.select("#yr2019").on("click", function() {loadData(2019);});
+        d3.select("#yr2020").on("click", function() {loadData(2020);});
+        d3.select("#yr2021").on("click", function() {loadData(2021);});
+        d3.select("#yr2022").on("click", function() {loadData(2022);});
+
+        // Load external data and boot
+        d3.queue()
+          .defer(d3.json, "./resources/us-albers-counties.json")
+          //.defer(d3.json, "./resources/us-albers.json")
+          .defer(d3.csv, "./data/annual_aqi_by_county_2022.csv", processRow)
+          .await(ready);
+        
+        function ready(error, topo) {
+
+            if(error)
+            {
+                console.log(error);
+                return;
+            }
+
+            var max = d3.max(data.values());
+        
+          // Draw the map
+          svg.append("g")
+            .selectAll("path")
+            .data(topojson.feature(topo, topo.objects.collection).features)
+            .enter()
+            .append("path")
+              .attr("class", "county") // Add a class for selection
+              .attr("d", d3.geoPath().projection(projection))
+              .attr("stroke", "black")
+              .attr("stroke-width", .25)
+              // set the color of each county
+              .attr("fill", function (d) {
+                d.total = (data.get(d.properties.fips) || 0);
+                var color = colorScale(d.total);
+                //console.log(`${d.properties.state}, ${d.properties.name}: ${d.properties.fips}: ${d.total} = ${color}`);
+                return color;
+              });
+          }
+
+          function updateMap() {
+            var max = d3.max(data.values());
+            console.log(max);
+            svg.selectAll(".county")
+              .transition()
+              .duration(250)
+              .attr("fill", function (d) {
+                d.total = (data.get(d.properties.fips) || 0);
+                return colorScale(d.total);
+              });
+          }     
+
+          function processRow(d)
+          {
+            if(d.State != "Alaska" && d.State != "Hawaii" && d.State != "Country Of Mexico" && d.State != "District Of Columbia" && d.State != "Puerto Rico" && d.State != "Virgin Islands" && d.County != "Baltimore (City)" && d.County != "St. Louis City")
+              {
+                  var code = fips.getByCountyAndState(d.County, d.State).fips;
+                  var value =  (+d["Hazardous Days"] + +d["Very Unhealthy Days"] + +d["Unhealthy Days"] + +d["Unhealthy for Sensitive Groups Days"] + +d["Moderate Days"]) / (+d["Days with AQI"]);
+                  data.set(code, value); 
+              }
+          }
+
+          function loadData(year)
+          {
+            data.clear();
+            d3.csv(`./data/annual_aqi_by_county_${year}.csv`, processRow, updateMap);
+          }
+
+        </script>
+</body>
+</html>
