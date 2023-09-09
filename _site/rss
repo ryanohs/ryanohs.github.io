@@ -3,12 +3,12 @@
 <channel>
  <title>Ryan Ohs' website</title>
  <link>https://ryanohs.github.io/</link>
- <lastBuildDate>Sat, 09 Sep 2023 22:39:25 GMT</lastBuildDate>
- <pubDate>Sat, 09 Sep 2023 22:39:25 GMT</pubDate>
+ <lastBuildDate>Sat, 09 Sep 2023 22:43:01 GMT</lastBuildDate>
+ <pubDate>Sat, 09 Sep 2023 22:43:01 GMT</pubDate>
  <ttl>1800</ttl>
 <item>
 <title>Mapping air quality</title>
-<description><![CDATA[<p>See the <a href="/demos/aqi/map.html">map</a>.</p>
+<description><![CDATA[<p>The smoke from Canadian wildfires affecting the US from coast to coast got me wondering if there was anywhere in the northern part of the country not impacted historically. I found a <a href="https://aqs.epa.gov/aqsweb/airdata/download_files.html">dataset</a> of historical AQI by county on the EPA's website.</p>
 ]]></description>
 <link>https://ryanohs.github.io/Mapping-air-quality</link>
 <pubDate>Sat, 09 Sep 2023 00:00:00 GMT</pubDate>
