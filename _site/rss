@@ -3,8 +3,8 @@
 <channel>
  <title>Ryan Ohs' website</title>
  <link>https://ryanohs.github.io/</link>
- <lastBuildDate>Sat, 09 Sep 2023 22:43:01 GMT</lastBuildDate>
- <pubDate>Sat, 09 Sep 2023 22:43:01 GMT</pubDate>
+ <lastBuildDate>Fri, 15 Sep 2023 04:14:09 GMT</lastBuildDate>
+ <pubDate>Fri, 15 Sep 2023 04:14:09 GMT</pubDate>
  <ttl>1800</ttl>
 <item>
 <title>Mapping air quality</title>
@@ -12,6 +12,13 @@
 ]]></description>
 <link>https://ryanohs.github.io/Mapping-air-quality</link>
 <pubDate>Sat, 09 Sep 2023 00:00:00 GMT</pubDate>
+</item>
+<item>
+<title>.NET 8's eye popping performance improvements</title>
+<description><![CDATA[<p>Yesterday Stephen Toub posted an <a href="https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-8/">extensive (200 page!) treatise</a> on the performance improvements in .NET 8. It seems everywhere you look in that document there's a 50-90% performance improvement, whether its in the collections, string operations, JSON parsing, reflection, JIT, and many other core operations. They even rewrote the Enum type.</p>
+]]></description>
+<link>https://ryanohs.github.io/NET-8s-eye-popping-performance-improvements</link>
+<pubDate>Thu, 14 Sep 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
 <title>MacOS quick action to save active tab as shortcut</title>
