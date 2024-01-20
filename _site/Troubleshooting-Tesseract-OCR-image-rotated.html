@@ -1,0 +1,57 @@
+<html lang="en-US">
+<head>
+    <title>Troubleshooting Tesseract OCR (image rotated)</title>
+    <link rel="stylesheet" href="css/water.css"/>
+    <link rel="stylesheet" href="css/highlight.css"/>
+</head>
+<body>
+<h1><a href="/">Ryan Ohs</a></h1>
+
+<hr style="margin: 0; border: solid 1px #201826"/>
+<hr style="margin: 0; border: solid 1px var(--background-body)"/>
+<hr style="margin: 0; border: solid 1px #201826"/>
+
+<h2>Troubleshooting Tesseract OCR (image rotated)</h2>
+
+<p>I'm trying to extract the text of documents I photographed with my phone. The photos looked correctly oriented on my phone and in Preview, but when I processed them with Tesseract, the output was junk. I determined the reason for this was the orientation EXIF metadata and found a solution to orient the photos.</p>
+<p><a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> is an open-source OCR engine. On Mac OS you can install it with homebrew.</p>
+<pre><code>brew install tesseract
+</code></pre>
+<p>Given an image from your phone, open a Terminal to the directory with your photo. Run this command to extract the text:</p>
+<pre><code>tesseract test.jpg test
+</code></pre>
+<p>This will output a file <code>test.txt</code> containing the extracted text. In my case the file looked like this:</p>
+<pre><code>‘od 3g ‘(Jaq 39 ‘suedns 39) “qued
+BZ “pos 8UI96Z “JOY? BUI9 ‘(ae
+&quot;yes By) 32} 80 “22 p97 ONIAUAS L
+*sBuiddo} pue I]IYD au] YIM aAsas *z
+*SUO!DAJIP S.JauN}DejNUeW OF
+Bulpsodze sayjem axeg ‘pauaysiou!
+</code></pre>
+<p>Clearly something went wrong!</p>
+<p>Tesseract does some preprocessing on the image before OCR-ing it. There is an option to export the processed image. Create a config file in your working directory.</p>
+<pre><code>echo 'tessedit_write_images true' &gt; config
+</code></pre>
+<p>Then you can pass the config file as an extra parameter:</p>
+<pre><code>tesseract test.jpg test config
+</code></pre>
+<p>This will output a file <code>test.processed.tif</code>. When I opened this file, it was sideways!</p>
+<p>First, in Preview I tried rotating the image 4 times and then saving it. Tesseract correctly processed the file.</p>
+<p>To automate fixing the orientation, I installed the ImageMagick tools.</p>
+<pre><code>brew install imagemagick
+</code></pre>
+<p>Then I utilized the auto-orient option. This overwrites the file in place.</p>
+<pre><code>magick mogrify -auto-orient test.jpg
+</code></pre>
+<p>If you inspect the EXIF data in Preview (Tools &gt; Inspector &gt; General), you should find Orientation set to 1 (Normal).</p>
+<p>Now you can rerun Tesseract and it will extract the text correctly.</p>
+
+
+<i style="color: var(--text-muted)">Written on January 20, 2024</i>
+
+<hr style="border: solid 1px #201826"/>
+
+<div style="text-align: center"><a href="/rss">RSS</a></div>
+
+</body>
+</html>

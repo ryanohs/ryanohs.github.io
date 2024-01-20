@@ -3,9 +3,16 @@
 <channel>
  <title>Ryan Ohs' website</title>
  <link>https://ryanohs.github.io/</link>
- <lastBuildDate>Fri, 15 Sep 2023 04:14:09 GMT</lastBuildDate>
- <pubDate>Fri, 15 Sep 2023 04:14:09 GMT</pubDate>
+ <lastBuildDate>Sat, 20 Jan 2024 21:59:40 GMT</lastBuildDate>
+ <pubDate>Sat, 20 Jan 2024 21:59:40 GMT</pubDate>
  <ttl>1800</ttl>
+<item>
+<title>Troubleshooting Tesseract OCR (image rotated)</title>
+<description><![CDATA[<p>I'm trying to extract the text of documents I photographed with my phone. The photos looked correctly oriented on my phone and in Preview, but when I processed them with Tesseract, the output was junk. I determined the reason for this was the orientation EXIF metadata and found a solution to orient the photos.</p>
+]]></description>
+<link>https://ryanohs.github.io/Troubleshooting-Tesseract-OCR-image-rotated</link>
+<pubDate>Sat, 20 Jan 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
 <title>Mapping air quality</title>
 <description><![CDATA[<p>The smoke from Canadian wildfires affecting the US from coast to coast got me wondering if there was anywhere in the northern part of the country not impacted historically. I found a <a href="https://aqs.epa.gov/aqsweb/airdata/download_files.html">dataset</a> of historical AQI by county on the EPA's website.</p>
