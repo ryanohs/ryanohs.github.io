@@ -20,11 +20,29 @@ export function setupCanvas(width, height) {
     ctx = canvas.getContext('2d');
     canvasImageData = ctx.createImageData(width, height);
 
-    // Add mouse event listeners
-    canvas.addEventListener('mousemove', async (event) => {
+    function updateCoordinates(eventX, eventY) {
         const rect = canvas.getBoundingClientRect();
-        mouseX = Math.floor(event.clientX - rect.left);
-        mouseY = Math.floor(event.clientY - rect.top);
+        mouseX = Math.floor(eventX - rect.left);
+        mouseY = Math.floor(eventY - rect.top);
+    }
+
+    // Mouse event for desktop
+    canvas.addEventListener('mousemove', (event) => {
+        updateCoordinates(event.clientX, event.clientY);
+    });
+
+    // Touch events for mobile
+    canvas.addEventListener('touchmove', (event) => {
+        event.preventDefault(); // Prevents scrolling while drawing
+        const touch = event.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
+    });
+
+    // Add touch start event to capture initial touch
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
     });
 
     console.log("Canvas setup complete");
