@@ -1,0 +1,31 @@
+{
+  "mainAssemblyName": "WasmGraphing",
+  "resources": {
+    "hash": "sha256-J0f7FQfJIKJ+PNIlFVIEZ/7/9TkVwuAdI2t6NBV+Cbw=",
+    "jsModuleNative": {
+      "dotnet.native.8.0.14.z4w6rw101a.js": "sha256-E9hUD89g76ngt6udAUkpOi0lydjvKl/au9lv47+KBNg="
+    },
+    "jsModuleRuntime": {
+      "dotnet.runtime.8.0.14.vqybv102m0.js": "sha256-44Vu7OSX4JP89eoc3oTYbYfC5C7USoIWuCw1W9IG6N4="
+    },
+    "wasmNative": {
+      "dotnet.native.wasm": "sha256-pTjCHcPWpiJziKmLbfF83r6iOc4q65uzwg6BLeP923w="
+    },
+    "icu": {
+      "icudt_CJK.dat": "sha256-SZLtQnRc0JkwqHab0VUVP7T3uBPSeYzxzDnpxPpUnHk=",
+      "icudt_EFIGS.dat": "sha256-8fItetYY8kQ0ww6oxwTLiT3oXlBwHKumbeP2pRF4yTc=",
+      "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
+    },
+    "assembly": {
+      "System.Console.wasm": "sha256-4b1QGKc3q1wNvvaRDjMky7XxWyDZMKe+lmOpM6Ot10s=",
+      "System.Private.CoreLib.wasm": "sha256-m/6qx4Duks2DHxTQTIeYmeTJ/pmnBXWo6fuezyhXF3I=",
+      "System.Runtime.InteropServices.JavaScript.wasm": "sha256-8NYQmJTLuQx8cGEvJqoZhdTVPeoC9Ntm2+W9sdmYCbc=",
+      "System.Runtime.wasm": "sha256-U4BV72uu1IlGaQrnjnQ1sL6QB+utGnj7kg9foA4Sh9s=",
+      "WasmGraphing.wasm": "sha256-8Quy9UcjsPPoGMMgCNBLA51CWAR44rhNq5+5fnqzr9E="
+    }
+  },
+  "cacheBootResources": true,
+  "debugLevel": 0,
+  "linkerEnabled": true,
+  "globalizationMode": "sharded"
+}
